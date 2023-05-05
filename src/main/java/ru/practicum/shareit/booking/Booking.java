@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.Builder;
 import lombok.Getter;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
@@ -18,6 +19,6 @@ public class Booking {
     private LocalDateTime start;
     private LocalDateTime end;
     private Item item;
-    private Item booker;
+    private User booker;
     private StatusBooking status;
 }

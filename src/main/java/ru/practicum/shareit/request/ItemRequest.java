@@ -5,7 +5,7 @@ import lombok.Getter;
 import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.Positive;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.
@@ -17,5 +17,5 @@ public class ItemRequest {
     private int id;
     private String description;
     private User requestor;
-    private LocalDate created;
+    private LocalDateTime created;
 }
