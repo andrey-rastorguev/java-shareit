@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -16,17 +15,18 @@ import java.util.List;
 @RequestMapping("/items")
 @AllArgsConstructor
 public class ItemController {
+    private static final String HEADER_ITEM_FOR_USER_ID = "X-Sharer-User-Id";
 
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto addItemDto(@RequestHeader("X-Sharer-User-Id") int userId,
+    public ItemDto addItemDto(@RequestHeader(HEADER_ITEM_FOR_USER_ID) int userId,
                               @RequestBody @Valid ItemDto itemDto) {
         return itemService.addItemDao(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto patchItemDto(@RequestHeader("X-Sharer-User-Id") int userId,
+    public ItemDto patchItemDto(@RequestHeader(HEADER_ITEM_FOR_USER_ID) int userId,
                                 @PathVariable("itemId") int itemId,
                                 @RequestBody ItemDto itemDto) {
         return itemService.patchItemDto(userId, itemId, itemDto);
@@ -38,7 +38,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") int userId) {
+    public List<ItemDto> getItemsByUserId(@RequestHeader(HEADER_ITEM_FOR_USER_ID) int userId) {
         return itemService.getItemsDtoByUserId(userId);
     }
 
