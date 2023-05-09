@@ -1,9 +1,12 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
 import lombok.Builder;
 import lombok.Getter;
 import ru.practicum.shareit.booking.other.StatusBooking;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 /**
@@ -11,11 +14,12 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Builder
-public class BookingDto {
+public class Booking {
+    @Positive
     private int id;
     private LocalDateTime start;
     private LocalDateTime end;
-    private int itemId;
-    private int bookerId;
+    private Item item;
+    private User booker;
     private StatusBooking status;
 }
