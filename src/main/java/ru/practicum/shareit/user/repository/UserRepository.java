@@ -1,21 +1,10 @@
 package ru.practicum.shareit.user.repository;
 
-import ru.practicum.shareit.user.dto.UserDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.model.User;
 
-import java.util.List;
-
-public interface UserRepository {
-    UserDto getUserDtoById(int userId);
-
-    UserDto addUserDto(UserDto userDto);
-
-    UserDto removeUserDtoById(int userId);
-
-    UserDto patchUserDto(UserDto userDto);
-
-    UserDto saveUserDto(UserDto userDto);
-
-    List<UserDto> getUsersDto();
-
-    boolean checkUserExistsById(int userId);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    boolean existsUserByEmail(String email);
 }

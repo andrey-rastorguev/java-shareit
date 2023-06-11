@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class ItemRequestDto {
-    private int id;
+    private long id;
     private String description;
-    private int requestorId;
+    private long requestorId;
     private LocalDateTime created;
 }

@@ -1,33 +1,43 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 /**
  * TODO Sprint add-controllers.
  */
 
-@Getter
-@Builder
-@Setter
-@AllArgsConstructor
+@Entity
+@Table(name = "items")
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+@ToString
 public class Item {
-    @Positive
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank
+    @Column(nullable = false)
     private String name;
+
     @NotBlank
     private String description;
+
     @NotNull
+    @Column(nullable = false)
     private boolean available;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JoinColumn
     private User owner;
+
+    @Transient
     private ItemRequest request;
 }

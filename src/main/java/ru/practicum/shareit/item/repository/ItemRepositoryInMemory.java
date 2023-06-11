@@ -8,15 +8,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class ItemRepositoryInMemory implements ItemRepository {
+public class ItemRepositoryInMemory {
 
-    private int lastId = 1;
+    private long lastId = 1;
 
-    private final Map<Integer, ItemDto> items = new HashMap<>();
+    private final Map<Long, ItemDto> items = new HashMap<>();
 
 
-    @Override
-    public ItemDto getItemDtoById(int itemDtoId) {
+    public ItemDto getItemDtoById(long itemDtoId) {
         ItemDto itemDto = items.get(itemDtoId);
         if (itemDto != null) {
             return itemDto;
@@ -25,13 +24,11 @@ public class ItemRepositoryInMemory implements ItemRepository {
         }
     }
 
-    @Override
     public ItemDto addItemDto(ItemDto itemDto) {
         itemDto.setId(lastId++);
         return saveItemDto(itemDto);
     }
 
-    @Override
     public ItemDto patchItemDto(ItemDto newItemDto, int itemId) {
         ItemDto oldItemDto = getItemDtoById(itemId);
         if (newItemDto.getName() != null) {
@@ -46,12 +43,11 @@ public class ItemRepositoryInMemory implements ItemRepository {
         return saveItemDto(oldItemDto);
     }
 
-    @Override
     public List<ItemDto> getItemsDtoByUserId(int userId) {
         return items.values().stream().filter(x -> x.getOwnerId() == userId).collect(Collectors.toList());
     }
 
-    @Override
+
     public List<ItemDto> searchItemsDtoByText(String text) {
         if (text.equals("")) {
             return new ArrayList<ItemDto>();
@@ -61,7 +57,6 @@ public class ItemRepositoryInMemory implements ItemRepository {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public ItemDto saveItemDto(ItemDto itemDto) {
         if (items.containsKey(itemDto.getId())) {
             items.remove(itemDto.getId());
