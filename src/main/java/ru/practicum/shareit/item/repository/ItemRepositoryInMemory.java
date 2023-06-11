@@ -52,8 +52,8 @@ public class ItemRepositoryInMemory {
         if (text.equals("")) {
             return new ArrayList<ItemDto>();
         }
-        return items.values().stream().
-                filter(x -> x.getDescription().toLowerCase(Locale.ROOT).indexOf(text.toLowerCase(Locale.ROOT)) > -1 && x.getAvailable())
+        return items.values().stream()
+                .filter(x -> x.getDescription().toLowerCase(Locale.ROOT).indexOf(text.toLowerCase(Locale.ROOT)) > -1 && x.getAvailable())
                 .collect(Collectors.toList());
     }
 
