@@ -17,37 +17,36 @@ import java.util.List;
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
 public class BookingController {
-
+    private static final String HEADER_ITEM_FOR_USER_ID = "X-Sharer-User-Id";
     private BookingService bookingService;
-    private UserService userService;
 
     @PostMapping
     public BookingDto createBooking(@RequestBody final BookingLightDto bookingLightDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                    @RequestHeader(HEADER_ITEM_FOR_USER_ID) Long userId) {
         return bookingService.createBooking(bookingLightDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDto approveBooking(@PathVariable final Long bookingId,
-                                     @RequestHeader("X-Sharer-User-Id") Long userId,
+                                     @RequestHeader(HEADER_ITEM_FOR_USER_ID) Long userId,
                                      @RequestParam Boolean approved) {
         return bookingService.approveBooking(bookingId, userId, approved);
     }
 
     @GetMapping("/{id}")
     public BookingDto getBooking(@PathVariable final Long id,
-                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                 @RequestHeader(HEADER_ITEM_FOR_USER_ID) Long userId) {
         return bookingService.getBooking(id, userId);
     }
 
     @GetMapping
-    public List<BookingDto> getBookingsForUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<BookingDto> getBookingsForUserId(@RequestHeader(HEADER_ITEM_FOR_USER_ID) Long userId,
                                                  @RequestParam(defaultValue = "ALL") BookingRequestStates state) {
         return bookingService.getBookingsForUserId(userId, state);
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getBookingsForItemOfUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<BookingDto> getBookingsForItemOfUserId(@RequestHeader(HEADER_ITEM_FOR_USER_ID) Long userId,
                                                        @RequestParam(defaultValue = "ALL") BookingRequestStates state) {
         return bookingService.getBookingsForItemOfUserId(userId, state);
     }
