@@ -6,7 +6,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.light.BookingLightDto;
 import ru.practicum.shareit.booking.other.BookingRequestStates;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
