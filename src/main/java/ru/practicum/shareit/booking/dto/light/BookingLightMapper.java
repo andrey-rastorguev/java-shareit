@@ -10,8 +10,6 @@ import ru.practicum.shareit.other.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.Optional;
-
 @Component
 @AllArgsConstructor
 public class BookingLightMapper {
