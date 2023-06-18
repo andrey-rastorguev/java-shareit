@@ -8,14 +8,14 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.other.exception.AccessDeniedForUserException;
-import ru.practicum.shareit.other.exception.ObjectNotFoundException;
+import ru.practicum.shareit.other.exception.ItemNotFoundException;
+import ru.practicum.shareit.other.exception.UserNotFoundException;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,9 +31,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto addItemDto(ItemDto itemDto, long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
+        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         itemDto.setOwnerId(userId);
         return itemMapper.toItemDto(itemRepository.save(itemMapper.toItem(itemDto)));
     }
@@ -41,11 +39,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto patchItemDto(long userId, long itemId, ItemDto itemDto) {
-        Optional<Item> oldItemOpt = itemRepository.findById(itemId);
-        if (oldItemOpt.isEmpty()) {
-            throw new ObjectNotFoundException("Item");
-        }
-        Item oldItem = oldItemOpt.get();
+        Item oldItem = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+
         if (oldItem.getOwner().getId() != userId) {
             throw new AccessDeniedForUserException(userId);
         }
@@ -58,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public ItemDto getItemDtoById(long itemId, long userId) {
-        return itemMapper.toItemDto(itemRepository.getById(itemId), userId);
+        return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new), userId);
     }
 
     @Override

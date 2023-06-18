@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.other.exception.ObjectNotFoundException;
+import ru.practicum.shareit.other.exception.ItemNotFoundException;
+import ru.practicum.shareit.other.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -31,21 +32,15 @@ public class BookingLightMapper {
     }
 
     public Booking toBooking(BookingLightDto bookingLightDto) {
-        Optional<Item> item = itemRepository.findById(bookingLightDto.getItemId());
-        if (item.isEmpty()) {
-            throw new ObjectNotFoundException("Item for Booking");
-        }
-        Optional<User> user = userRepository.findById(bookingLightDto.getBookerId());
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("User for Booking");
-        }
+        Item item = itemRepository.findById(bookingLightDto.getItemId()).orElseThrow(ItemNotFoundException::new);
+        User user = userRepository.findById(bookingLightDto.getBookerId()).orElseThrow(UserNotFoundException::new);
         Booking booking = Booking.builder()
                 .id(bookingLightDto.getId())
                 .start(bookingLightDto.getStart())
                 .end(bookingLightDto.getEnd())
                 .status(bookingLightDto.getStatus())
-                .item(item.get())
-                .booker(user.get())
+                .item(item)
+                .booker(user)
                 .build();
         return booking;
     }

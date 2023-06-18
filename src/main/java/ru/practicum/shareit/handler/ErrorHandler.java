@@ -14,7 +14,19 @@ import javax.persistence.EntityNotFoundException;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    ErrorResponse handlerObjectNotFound(final ObjectNotFoundException e) {
+    ErrorResponse handlerUserNotFound(final UserNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse handlerItemNotFound(final ItemNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse handlerBookingNotFound(final BookingNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 

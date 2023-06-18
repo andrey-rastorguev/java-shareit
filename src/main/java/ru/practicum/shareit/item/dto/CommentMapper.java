@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.other.exception.ObjectNotFoundException;
+import ru.practicum.shareit.other.exception.ItemNotFoundException;
+import ru.practicum.shareit.other.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -31,19 +32,13 @@ public class CommentMapper {
     }
 
     public Comment toComment(CommentDto commentDto) {
-        Optional<Item> item = itemRepository.findById(commentDto.getItemId());
-        if (item.isEmpty()) {
-            throw new ObjectNotFoundException("Item");
-        }
-        Optional<User> user = userRepository.findById(commentDto.getAuthorId());
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
+        Item item = itemRepository.findById(commentDto.getItemId()).orElseThrow(ItemNotFoundException::new);
+        User user = userRepository.findById(commentDto.getAuthorId()).orElseThrow(UserNotFoundException::new);
         Comment comment = Comment.builder()
                 .id(commentDto.getId())
                 .text(commentDto.getText())
-                .item(item.get())
-                .author(user.get())
+                .item(item)
+                .author(user)
                 .created(commentDto.getCreated())
                 .build();
         return comment;

@@ -14,10 +14,7 @@ import ru.practicum.shareit.booking.other.StatusBooking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.other.exception.AccessDeniedForItemException;
-import ru.practicum.shareit.other.exception.IllegalUpdateObjectException;
-import ru.practicum.shareit.other.exception.ObjectNotFoundException;
-import ru.practicum.shareit.other.exception.WrongInputDataBookingException;
+import ru.practicum.shareit.other.exception.*;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -45,10 +42,7 @@ public class BookingServiceImpl implements BookingService {
         bookingLightDto.setBookerId(bookerId);
         bookingLightDto.setStatus(StatusBooking.WAITING);
         checkedBookingLightDto(bookingLightDto);
-        Optional<User> user = userRepository.findById(bookerId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
+        userRepository.findById(bookerId).orElseThrow(UserNotFoundException::new);
         Booking booking = bookingLightMapper.toBooking(bookingLightDto);
         booking = bookingRepository.save(booking);
         return bookingMapper.toBookingDto(booking);
@@ -57,18 +51,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto approveBooking(long bookingId, long userId, Boolean approved) {
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if (booking.isEmpty()) {
-            throw new ObjectNotFoundException("Booking");
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(BookingNotFoundException::new);
+        if (booking.getItem().getOwner().getId() != userId) {
+            throw new UserNotFoundException();
         }
-        if (booking.get().getItem().getOwner().getId() != userId) {
-            throw new ObjectNotFoundException("User");
-        }
-        if (booking.get().getStatus() == StatusBooking.APPROVED) {
+        if (booking.getStatus() == StatusBooking.APPROVED) {
             throw new IllegalUpdateObjectException("Booking");
         }
-        booking.get().setStatus(approved ? StatusBooking.APPROVED : StatusBooking.REJECTED);
-        return bookingMapper.toBookingDto(bookingRepository.save(booking.get()));
+        booking.setStatus(approved ? StatusBooking.APPROVED : StatusBooking.REJECTED);
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -76,10 +67,10 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto getBooking(long id, long userId) {
         Optional<Booking> booking = bookingRepository.findById(id);
         if (booking.isEmpty()) {
-            throw new ObjectNotFoundException("Booking");
+            throw new BookingNotFoundException();
         }
         if (booking.get().getItem().getOwner().getId() != userId && booking.get().getBooker().getId() != userId) {
-            throw new ObjectNotFoundException("User");
+            throw new UserNotFoundException();
         }
         return bookingMapper.toBookingDto(booking.get());
     }
@@ -87,10 +78,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingDto> getBookingsForUserId(Long userId, BookingRequestStates state) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
+        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         List<Booking> bookings = bookingRepository.findByBooker_Id(userId);
         List<BookingDto> bookingsDto = getBookingByState(bookings, state)
                 .stream()
@@ -103,11 +91,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingDto> getBookingsForItemOfUserId(Long userId, BookingRequestStates state) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
-        List<Booking> bookings = bookingRepository.findByItem_Owner(user.get());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        List<Booking> bookings = bookingRepository.findByItem_Owner(user);
         List<BookingDto> bookingsDto = getBookingByState(bookings, state)
                 .stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -117,23 +102,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void checkedBookingLightDto(BookingLightDto bookingLightDto) {
-        if (userRepository.findById(bookingLightDto.getBookerId()).isEmpty()) {
-            throw new ObjectNotFoundException("User");
-        }
-        Optional<Item> item = itemRepository.findById(bookingLightDto.getItemId());
-        if (item.isEmpty()) {
-            throw new ObjectNotFoundException("Item");
-        }
-        if (!item.get().isAvailable()) {
-            throw new AccessDeniedForItemException(item.get().getId());
+        userRepository.findById(bookingLightDto.getBookerId()).orElseThrow(UserNotFoundException::new);
+        Item item = itemRepository.findById(bookingLightDto.getItemId()).orElseThrow(ItemNotFoundException::new);
+        if (!item.isAvailable()) {
+            throw new AccessDeniedForItemException(item.getId());
         }
         if (bookingLightDto.getEnd() == null || bookingLightDto.getStart() == null ||
                 bookingLightDto.getEnd().isBefore(bookingLightDto.getStart()) ||
                 bookingLightDto.getEnd().equals(bookingLightDto.getStart())) {
             throw new WrongInputDataBookingException("Booking");
         }
-        if (bookingLightDto.getBookerId() == item.get().getOwner().getId()) {
-            throw new ObjectNotFoundException("Item");
+        if (bookingLightDto.getBookerId() == item.getOwner().getId()) {
+            throw new ItemNotFoundException();
         }
     }
 
