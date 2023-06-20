@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.repository;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.other.exception.ObjectNotFoundException;
+import ru.practicum.shareit.other.exception.ItemNotFoundException;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class ItemRequestRepositoryInMemory implements ItemRequestRepository {
         if (itemRequest != null) {
             return itemRequest;
         } else {
-            throw new ObjectNotFoundException("ItemRequest");
+            throw new ItemNotFoundException();
         }
     }
 }

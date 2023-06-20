@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ItemRequest {
     @Positive
-    private int id;
+    private long id;
     private String description;
     private User requestor;
     private LocalDateTime created;

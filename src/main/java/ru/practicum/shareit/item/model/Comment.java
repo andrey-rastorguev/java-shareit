@@ -1,47 +1,41 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.model.ItemRequest;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-/**
- * TODO Sprint add-controllers.
- */
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "items")
+@Table(name = "comments")
+@Builder
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Item {
-
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @NotBlank
     @Column(nullable = false)
-    private String name;
-
-    @NotBlank
-    private String description;
+    private String text;
 
     @NotNull
-    @Column(nullable = false)
-    private boolean available;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @JoinColumn
-    private User owner;
+    @JoinColumn(nullable = false)
+    private Item item;
 
-    @Transient
-    private ItemRequest request;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private User author;
+
+    @CreationTimestamp
+    private LocalDateTime created;
 }
