@@ -42,6 +42,7 @@ public class Item {
     @JoinColumn
     private User owner;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private ItemRequest request;
 }

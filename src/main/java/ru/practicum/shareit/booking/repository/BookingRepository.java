@@ -17,7 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where b.item = ?1 and b.booker = ?2 and b.status <> 'REJECTED' and b.start <= ?3")
     boolean existsByItemAndBookerAndStatusNotAndStartLessThanEqual(Item item, User booker, LocalDateTime start);
 
-    List<Booking> findByBooker_Id(Long userId);
+    List<Booking> findByBooker(User user);
 
     List<Booking> findByItem_Owner(User user);
 

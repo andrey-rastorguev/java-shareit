@@ -17,7 +17,7 @@ public class BookingLightMapper {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public BookingLightDto toBookingLightDto(Booking booking) {
+    public BookingLightDto toDto(Booking booking) {
         BookingLightDto bookingLightDto = BookingLightDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
@@ -29,7 +29,7 @@ public class BookingLightMapper {
         return bookingLightDto;
     }
 
-    public Booking toBooking(BookingLightDto bookingLightDto) {
+    public Booking toEntity(BookingLightDto bookingLightDto) {
         Item item = itemRepository.findById(bookingLightDto.getItemId()).orElseThrow(ItemNotFoundException::new);
         User user = userRepository.findById(bookingLightDto.getBookerId()).orElseThrow(UserNotFoundException::new);
         Booking booking = Booking.builder()

@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.other.StatusBooking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -25,20 +26,21 @@ public class ItemMapper {
     private final BookingRepository bookingRepository;
     private final BookingLightMapper bookingLightMapper;
     private final CommentMapper commentLightMapper;
+    private final ItemRequestRepository itemRequestRepository;
 
-    public ItemDto toItemDto(Item item, long userId) {
-        ItemDto itemDto = toItemDto(item);
+    public ItemDto toDto(Item item, long userId) {
+        ItemDto itemDto = toDto(item);
         if (itemDto.getOwnerId() == userId) {
             putNextAndLastBooking(itemDto);
         }
         return itemDto;
     }
 
-    public ItemDto toItemDto(Item item) {
+    public ItemDto toDto(Item item) {
         List<CommentDto> comments = commentRepository
                 .findByItem_IdOrderByIdAsc(item.getId())
                 .stream()
-                .map(commentLightMapper::toCommentDto)
+                .map(commentLightMapper::toDto)
                 .collect(Collectors.toList());
 
         ItemDto itemDto = ItemDto.builder()
@@ -48,17 +50,19 @@ public class ItemMapper {
                 .available(item.isAvailable())
                 .ownerId(item.getOwner().getId())
                 .comments(comments)
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
         return itemDto;
     }
 
-    public Item toItem(ItemDto itemDto) {
+    public Item toEntity(ItemDto itemDto) {
         Item item = Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .owner(itemDto.getOwnerId() != null ? userRepository.getById(itemDto.getOwnerId()) : null)
+                .request(itemDto.getRequestId() != null ? itemRequestRepository.getById(itemDto.getRequestId()) : null)
                 .build();
         return item;
     }
@@ -72,11 +76,11 @@ public class ItemMapper {
         Booking nextBooking = null;
         if (bookingsAfter.size() > 0) {
             nextBooking = bookingsAfter.get(0);
-            itemDto.setNextBooking(bookingLightMapper.toBookingLightDto(nextBooking));
+            itemDto.setNextBooking(bookingLightMapper.toDto(nextBooking));
         }
         if (bookingsBefore.size() > 0) {
             lastBooking = bookingsBefore.get(bookingsBefore.size() - 1);
-            itemDto.setLastBooking(bookingLightMapper.toBookingLightDto(lastBooking));
+            itemDto.setLastBooking(bookingLightMapper.toDto(lastBooking));
         }
     }
 

@@ -26,6 +26,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse handlerItemRequestNotFound(final ItemRequestNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     ErrorResponse handlerBookingNotFound(final BookingNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
