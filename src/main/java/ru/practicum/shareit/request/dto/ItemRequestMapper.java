@@ -38,7 +38,7 @@ public class ItemRequestMapper {
                 .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
                 .created(itemRequestDto.getCreated() != null ? itemRequestDto.getCreated() : LocalDateTime.now())
-                .requester(itemRequestDto.getRequesterId() != null ? userRepository.findById(itemRequestDto.getRequesterId()).orElseThrow(UserNotFoundException::new): null)
+                .requester(itemRequestDto.getRequesterId() != null ? userRepository.findById(itemRequestDto.getRequesterId()).orElseThrow(UserNotFoundException::new) : null)
                 .items(itemRequestDto.getItems() != null ? itemRequestDto.getItems().stream().map(itemMapper::toEntity).collect(Collectors.toList()) : new ArrayList<Item>())
                 .build();
         return itemRequest;
