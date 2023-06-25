@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -33,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItemDto(ItemDto itemDto, long userId) {
         userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         itemDto.setOwnerId(userId);
-        return itemMapper.toItemDto(itemRepository.save(itemMapper.toItem(itemDto)));
+        return itemMapper.toDto(itemRepository.save(itemMapper.toEntity(itemDto)));
     }
 
     @Override
@@ -47,27 +48,29 @@ public class ItemServiceImpl implements ItemService {
         oldItem.setAvailable(itemDto.getAvailable() == null ? oldItem.isAvailable() : itemDto.getAvailable());
         oldItem.setDescription(itemDto.getDescription() == null ? oldItem.getDescription() : itemDto.getDescription());
         oldItem.setName(itemDto.getName() == null ? oldItem.getName() : itemDto.getName());
-        return itemMapper.toItemDto(itemRepository.save(oldItem));
+        return itemMapper.toDto(itemRepository.save(oldItem));
     }
 
     @Override
     @Transactional(readOnly = true)
     public ItemDto getItemDtoById(long itemId, long userId) {
-        return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new), userId);
+        return itemMapper.toDto(itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new), userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getItemsDtoByUserId(long userId) {
+    public List<ItemDto> getItemsDtoByUserId(long userId, int from, int size) {
         User user = userRepository.getById(userId);
-        return itemRepository.findByOwner(user).stream().map(x -> itemMapper.toItemDto(x,userId)).collect(Collectors.toList());
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return itemRepository.findByOwner(user,page).stream().map(x -> itemMapper.toDto(x,userId)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> searchItemsDtoByText(String text) {
+    public List<ItemDto> searchItemsDtoByText(String text, int from, int size) {
         if (text != null && !text.equals("")) {
-            return itemRepository.searchItemsDtoByText(text).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+            PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+            return itemRepository.searchItemsDtoByText(text,page).stream().map(itemMapper::toDto).collect(Collectors.toList());
         } else {
             return new ArrayList<ItemDto>();
         }

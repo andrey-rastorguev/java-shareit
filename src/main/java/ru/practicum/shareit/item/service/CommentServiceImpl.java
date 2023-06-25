@@ -23,12 +23,12 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createCommentForItem(CommentDto commentLightDto, long itemId, long userId) {
         commentLightDto.setAuthorId(userId);
         commentLightDto.setItemId(itemId);
-        Comment comment = commentLightMapper.toComment(commentLightDto);
+        Comment comment = commentLightMapper.toEntity(commentLightDto);
         if (!bookingRepository.existsByItemAndBookerAndStatusNotAndStartLessThanEqual(comment.getItem(), comment.getAuthor(), LocalDateTime.now())) {
             throw new IllegalUpdateObjectException("Недостаточно прав и условий для добавления комментария");
         }
         comment = commentRepository.save(comment);
-        commentLightDto = commentLightMapper.toCommentDto(comment);
+        commentLightDto = commentLightMapper.toDto(comment);
         return commentLightDto;
     }
 }

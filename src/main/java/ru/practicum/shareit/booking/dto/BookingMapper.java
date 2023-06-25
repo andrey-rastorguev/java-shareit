@@ -16,22 +16,22 @@ public class BookingMapper {
     private final UserMapper userMapper;
     private final ItemRepository itemRepository;
 
-    public BookingDto toBookingDto(Booking booking) {
+    public BookingDto toDto(Booking booking) {
         BookingDto bookingDto = BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus())
                 .itemId(booking.getItem().getId())
-                .item(itemMapper.toItemDto(booking.getItem()))
-                .booker(userMapper.toUserDto(booking.getBooker()))
+                .item(itemMapper.toDto(booking.getItem()))
+                .booker(userMapper.toDto(booking.getBooker()))
                 .build();
         return bookingDto;
     }
 
-    public Booking toBooking(BookingDto bookingDto) {
+    public Booking toEntity(BookingDto bookingDto) {
         Item item = bookingDto.getItem() != null
-                ? itemMapper.toItem(bookingDto.getItem())
+                ? itemMapper.toEntity(bookingDto.getItem())
                 : itemRepository.getById(bookingDto.getItemId());
         Booking booking = Booking.builder()
                 .id(bookingDto.getId())
@@ -39,7 +39,7 @@ public class BookingMapper {
                 .end(bookingDto.getEnd())
                 .status(bookingDto.getStatus())
                 .item(item)
-                .booker(userMapper.toUser(bookingDto.getBooker()))
+                .booker(userMapper.toEntity(bookingDto.getBooker()))
                 .build();
         return booking;
     }
