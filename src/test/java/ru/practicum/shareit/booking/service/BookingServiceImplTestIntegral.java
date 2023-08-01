@@ -53,9 +53,9 @@ class BookingServiceImplTestIntegral {
         em.persist(user3);
         em.flush();
         TypedQuery<User> query = em.createQuery("Select u from User u where u.id = :id", User.class);
-        users.put(1,query.setParameter("id", 1L).getSingleResult());
-        users.put(2,query.setParameter("id", 2L).getSingleResult());
-        users.put(3,query.setParameter("id", 3L).getSingleResult());
+        users.put(1, query.setParameter("id", 1L).getSingleResult());
+        users.put(2, query.setParameter("id", 2L).getSingleResult());
+        users.put(3, query.setParameter("id", 3L).getSingleResult());
         Item item1 = Item.builder()
                 .name("item1")
                 .description("description of item1")
@@ -72,8 +72,8 @@ class BookingServiceImplTestIntegral {
         em.persist(item2);
         em.flush();
         TypedQuery<Item> queryItem = em.createQuery("Select i from Item i where i.id = :id", Item.class);
-        items.put(1,queryItem.setParameter("id", 1L).getSingleResult());
-        items.put(2,queryItem.setParameter("id", 2L).getSingleResult());
+        items.put(1, queryItem.setParameter("id", 1L).getSingleResult());
+        items.put(2, queryItem.setParameter("id", 2L).getSingleResult());
         Booking booking1 = Booking.builder()
                 .item(item1)
                 .booker(user2)
@@ -103,47 +103,47 @@ class BookingServiceImplTestIntegral {
                 .start(LocalDateTime.now().plusSeconds(1))
                 .end(LocalDateTime.now().plusSeconds(2))
                 .build();
-        bookingService.createBooking(bookingLightDto,3L);
+        bookingService.createBooking(bookingLightDto, 3L);
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
         Booking bookingOut = query.setParameter("id", 3L).getSingleResult();
-        assertThat(bookingOut.getId(),equalTo(3L));
-        assertThat(bookingOut.getBooker().getId(),equalTo(bookingLightDto.getBookerId()));
-        assertThat(bookingOut.getItem().getId(),equalTo(bookingLightDto.getItemId()));
-        assertThat(bookingOut.getStatus(),equalTo(bookingLightDto.getStatus()));
-        assertThat(bookingOut.getStart(),equalTo(bookingLightDto.getStart()));
-        assertThat(bookingOut.getEnd(),equalTo(bookingLightDto.getEnd()));
+        assertThat(bookingOut.getId(), equalTo(3L));
+        assertThat(bookingOut.getBooker().getId(), equalTo(bookingLightDto.getBookerId()));
+        assertThat(bookingOut.getItem().getId(), equalTo(bookingLightDto.getItemId()));
+        assertThat(bookingOut.getStatus(), equalTo(bookingLightDto.getStatus()));
+        assertThat(bookingOut.getStart(), equalTo(bookingLightDto.getStart()));
+        assertThat(bookingOut.getEnd(), equalTo(bookingLightDto.getEnd()));
     }
 
     @Test
     void approveBooking() {
-        bookingService.approveBooking(2L,2L,true);
+        bookingService.approveBooking(2L, 2L, true);
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
         Booking bookingOut = query.setParameter("id", 2L).getSingleResult();
-        assertThat(bookingOut.getStatus(),equalTo(StatusBooking.APPROVED));
+        assertThat(bookingOut.getStatus(), equalTo(StatusBooking.APPROVED));
     }
 
     @Test
     void getBooking() {
-        BookingDto bookingDto = bookingService.getBooking(1L,2L);
+        BookingDto bookingDto = bookingService.getBooking(1L, 2L);
         TypedQuery<Booking> query = em.createQuery("Select b from Booking b where b.id = :id", Booking.class);
         Booking bookingOut = query.setParameter("id", 1L).getSingleResult();
-        assertThat(bookingDto.getId(),equalTo(bookingOut.getId()));
-        assertThat(bookingDto.getBooker().getId(),equalTo(bookingOut.getBooker().getId()));
-        assertThat(bookingDto.getItem().getId(),equalTo(bookingOut.getItem().getId()));
-        assertThat(bookingDto.getStatus(),equalTo(bookingOut.getStatus()));
-        assertThat(bookingDto.getStart(),equalTo(bookingOut.getStart()));
-        assertThat(bookingDto.getEnd(),equalTo(bookingOut.getEnd()));
+        assertThat(bookingDto.getId(), equalTo(bookingOut.getId()));
+        assertThat(bookingDto.getBooker().getId(), equalTo(bookingOut.getBooker().getId()));
+        assertThat(bookingDto.getItem().getId(), equalTo(bookingOut.getItem().getId()));
+        assertThat(bookingDto.getStatus(), equalTo(bookingOut.getStatus()));
+        assertThat(bookingDto.getStart(), equalTo(bookingOut.getStart()));
+        assertThat(bookingDto.getEnd(), equalTo(bookingOut.getEnd()));
     }
 
     @Test
     void getBookingsForUserId() {
-        List<BookingDto> bookingsDto = bookingService.getBookingsForUserId(1L, BookingRequestStates.ALL,0,10);
+        List<BookingDto> bookingsDto = bookingService.getBookingsForUserId(1L, BookingRequestStates.ALL, 0, 10);
         assertThat(bookingsDto, hasSize(1));
     }
 
     @Test
     void getBookingsForItemOfUserId() {
-        List<BookingDto> bookingsDto = bookingService.getBookingsForItemOfUserId(1L, BookingRequestStates.ALL,0,10);
+        List<BookingDto> bookingsDto = bookingService.getBookingsForItemOfUserId(1L, BookingRequestStates.ALL, 0, 10);
         assertThat(bookingsDto, hasSize(1));
     }
 }

@@ -78,7 +78,7 @@ class CommentServiceImplTestIntegral {
 
     @Test
     void createCommentForItem() {
-        CommentDto commentDtoIn = CommentDto.builder().itemId(1L).authorId(1l).text("Коментарий").authorName("Имя").build();
+        CommentDto commentDtoIn = CommentDto.builder().itemId(1L).authorId(1L).text("Коментарий").authorName("Имя").build();
         commentService.createCommentForItem(commentDtoIn, 1L, 2L);
         TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.id = :id", Comment.class);
         Comment commentOut = query.setParameter("id", 1L).getSingleResult();
