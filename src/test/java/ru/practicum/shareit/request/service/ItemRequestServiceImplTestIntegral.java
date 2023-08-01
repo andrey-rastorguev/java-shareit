@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class ItemRequestServiceImpl_IntegralTest {
+class ItemRequestServiceImplTestIntegral {
 
     private final EntityManager em;
 
@@ -58,9 +58,9 @@ class ItemRequestServiceImpl_IntegralTest {
         em.persist(user3);
         em.flush();
         TypedQuery<User> query = em.createQuery("Select u from User u where u.id = :id", User.class);
-        users.put(1,query.setParameter("id", 1L).getSingleResult());
-        users.put(2,query.setParameter("id", 2L).getSingleResult());
-        users.put(3,query.setParameter("id", 3L).getSingleResult());
+        users.put(1, query.setParameter("id", 1L).getSingleResult());
+        users.put(2, query.setParameter("id", 2L).getSingleResult());
+        users.put(3, query.setParameter("id", 3L).getSingleResult());
         Item item1 = Item.builder()
                 .name("item1")
                 .description("description of item1")
@@ -84,9 +84,9 @@ class ItemRequestServiceImpl_IntegralTest {
         em.persist(item3);
         em.flush();
         TypedQuery<Item> queryItem = em.createQuery("Select i from Item i where i.id = :id", Item.class);
-        items.put(1,queryItem.setParameter("id", 1L).getSingleResult());
-        items.put(2,queryItem.setParameter("id", 2L).getSingleResult());
-        items.put(3,queryItem.setParameter("id", 3L).getSingleResult());
+        items.put(1, queryItem.setParameter("id", 1L).getSingleResult());
+        items.put(2, queryItem.setParameter("id", 2L).getSingleResult());
+        items.put(3, queryItem.setParameter("id", 3L).getSingleResult());
         ItemRequest itemRequest1 = ItemRequest.builder()
                 .requester(user1)
                 .description("Нужна тяпка")
@@ -102,15 +102,15 @@ class ItemRequestServiceImpl_IntegralTest {
         em.persist(itemRequest2);
         em.flush();
         TypedQuery<ItemRequest> queryRequest = em.createQuery("Select ir from ItemRequest ir where ir.id = :id", ItemRequest.class);
-        itemsRequest.put(1,queryRequest.setParameter("id", 1L).getSingleResult());
-        itemsRequest.put(2,queryRequest.setParameter("id", 2L).getSingleResult());
+        itemsRequest.put(1, queryRequest.setParameter("id", 1L).getSingleResult());
+        itemsRequest.put(2, queryRequest.setParameter("id", 2L).getSingleResult());
     }
 
 
     @Test
     void getUserRequests() {
         List<ItemRequestDto> requests = itemRequestService.getUserRequests(2L);
-        assertThat(requests,hasSize(1));
+        assertThat(requests, hasSize(1));
         assertThat(requests.get(0).getId(), notNullValue());
         assertThat(requests.get(0).getDescription(), equalTo(itemsRequest.get(2).getDescription()));
         assertThat(requests.get(0).getItems(), hasSize(1));
@@ -118,8 +118,8 @@ class ItemRequestServiceImpl_IntegralTest {
 
     @Test
     void getOtherUserRequests() {
-        List<ItemRequestDto> requests = itemRequestService.getOtherUserRequests(3L,0,10);
-        assertThat(requests,hasSize(2));
+        List<ItemRequestDto> requests = itemRequestService.getOtherUserRequests(3L, 0, 10);
+        assertThat(requests, hasSize(2));
     }
 
 

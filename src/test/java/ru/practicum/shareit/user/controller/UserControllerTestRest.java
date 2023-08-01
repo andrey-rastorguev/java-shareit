@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import ru.practicum.shareit.other.exception.UserNotFoundException;
-import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
-public class UserController_RestTest {
+public class UserControllerTestRest {
     @MockBean
     private UserService userService;
     @Autowired
@@ -103,18 +102,18 @@ public class UserController_RestTest {
     void createUser_WhenUserIsWrongValidate() throws Exception {
 
         when(userService.addUserDto(any()))
-                .thenThrow(new javax.validation.ConstraintViolationException("",null));
+                .thenThrow(new javax.validation.ConstraintViolationException("", null));
 
         mvc.perform(post("/users"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(400));
-   }
+    }
 
     @Test
     void createUser_WhenUserIsWrongHibernateValidate() throws Exception {
 
         when(userService.addUserDto(any()))
-                .thenThrow(new org.hibernate.exception.ConstraintViolationException("",new SQLException(""),""));
+                .thenThrow(new org.hibernate.exception.ConstraintViolationException("", new SQLException(""), ""));
 
         mvc.perform(post("/users"))
                 .andDo(MockMvcResultHandlers.print())
@@ -124,7 +123,7 @@ public class UserController_RestTest {
     @Test
     void patchUser_WhenUpdateUserIsRight() throws Exception {
         int userIndex = 0;
-        when(userService.patchUserDto(any(),anyLong()))
+        when(userService.patchUserDto(any(), anyLong()))
                 .thenReturn(testUsersDto.get(userIndex));
 
 
@@ -142,8 +141,8 @@ public class UserController_RestTest {
 
     @Test
     void patchUser_WhenUpdateUserIsWrongValidate() throws Exception {
-        when(userService.patchUserDto(any(),anyLong()))
-                .thenThrow(new javax.validation.ConstraintViolationException("",null));
+        when(userService.patchUserDto(any(), anyLong()))
+                .thenThrow(new javax.validation.ConstraintViolationException("", null));
 
         mvc.perform(post("/users"))
                 .andDo(MockMvcResultHandlers.print())
@@ -152,8 +151,8 @@ public class UserController_RestTest {
 
     @Test
     void patchUser_WhenUpdateUserIsWrongHibernateValidate() throws Exception {
-        when(userService.patchUserDto(any(),anyLong()))
-                .thenThrow(new org.hibernate.exception.ConstraintViolationException("",new SQLException(""),""));
+        when(userService.patchUserDto(any(), anyLong()))
+                .thenThrow(new org.hibernate.exception.ConstraintViolationException("", new SQLException(""), ""));
 
         mvc.perform(post("/users"))
                 .andDo(MockMvcResultHandlers.print())
@@ -169,6 +168,7 @@ public class UserController_RestTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
+
     @Test
     void deleteUser_WhenUserIsNotExists() throws Exception {
         when(userService.removeUserDtoById(anyLong()))

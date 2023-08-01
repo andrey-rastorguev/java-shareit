@@ -18,7 +18,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
 
 
 @Transactional
@@ -26,7 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class UserServiceImpl_IntegralTest {
+class UserServiceImplTestIntegral {
 
     private final EntityManager em;
 

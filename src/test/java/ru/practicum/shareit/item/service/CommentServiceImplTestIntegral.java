@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +28,7 @@ import static org.hamcrest.Matchers.equalTo;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class CommentServiceImpl_IntegralTest {
+class CommentServiceImplTestIntegral {
 
     private final EntityManager em;
 
