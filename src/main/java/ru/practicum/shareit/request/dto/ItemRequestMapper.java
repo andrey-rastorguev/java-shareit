@@ -27,7 +27,7 @@ public class ItemRequestMapper {
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
                 .requesterId(itemRequest.getRequester().getId())
-                .items(itemRequest.getItems().stream().map(itemMapper::toDto).collect(Collectors.toList()))
+                .items(itemRequest.getItems() != null ? itemRequest.getItems().stream().map(itemMapper::toDto).collect(Collectors.toList()) : null)
                 .build();
 
         return itemRequestDto;

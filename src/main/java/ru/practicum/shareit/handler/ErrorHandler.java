@@ -50,7 +50,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    ErrorResponse handlerConstraintViolationExceptionHiber(final org.hibernate.exception.ConstraintViolationException e) {
+    ErrorResponse handlerConstraintViolationExceptionHibernate(final org.hibernate.exception.ConstraintViolationException e) {
         return new ErrorResponse(e.getMessage());
     }
 
