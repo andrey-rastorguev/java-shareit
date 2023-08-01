@@ -104,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingLightDto.getEnd().equals(bookingLightDto.getStart())) {
             throw new WrongInputDataBookingException("Booking");
         }
-        if (bookingLightDto.getBookerId() == item.getOwner().getId()) {
+        if (bookingLightDto.getBookerId().equals(item.getOwner().getId())) {
             throw new ItemNotFoundException();
         }
     }
