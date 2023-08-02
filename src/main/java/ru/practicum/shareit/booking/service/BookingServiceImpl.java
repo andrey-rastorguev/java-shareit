@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService {
 
@@ -87,8 +87,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingDto> getBookingsForItemOfUserId(Long userId, BookingRequestStates state, int from, int size) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Booking> bookings = bookingRepository.findByItem_Owner(user);
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        List<Booking> bookings = bookingRepository.findByItem_Owner(user.get());
         List<BookingDto> bookingsDto = getBookingByState(bookings, state, from, size);
         return bookingsDto;
     }
