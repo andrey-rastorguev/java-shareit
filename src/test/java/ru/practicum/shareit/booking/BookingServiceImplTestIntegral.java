@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.service;
+package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.dto.light.BookingLightDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.other.BookingRequestStates;
 import ru.practicum.shareit.booking.other.StatusBooking;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 

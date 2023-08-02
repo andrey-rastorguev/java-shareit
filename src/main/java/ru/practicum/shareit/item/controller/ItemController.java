@@ -46,15 +46,15 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsByUserId(@RequestHeader(HEADER_ITEM_FOR_USER_ID) long userId,
-                                          @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                          @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                           @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return itemService.getItemsDtoByUserId(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItemsByUserId(@RequestParam("text") final String text,
-                                          @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                          @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+    public List<ItemDto> searchItemsByText(@RequestParam("text") final String text,
+                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                           @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return itemService.searchItemsDtoByText(text, from, size);
     }
 
