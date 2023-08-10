@@ -17,7 +17,7 @@ public class CommentMapper {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public CommentDto toCommentDto(Comment comment) {
+    public CommentDto toDto(Comment comment) {
         CommentDto commentDto = CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -29,7 +29,7 @@ public class CommentMapper {
         return commentDto;
     }
 
-    public Comment toComment(CommentDto commentDto) {
+    public Comment toEntity(CommentDto commentDto) {
         Item item = itemRepository.findById(commentDto.getItemId()).orElseThrow(ItemNotFoundException::new);
         User user = userRepository.findById(commentDto.getAuthorId()).orElseThrow(UserNotFoundException::new);
         Comment comment = Comment.builder()

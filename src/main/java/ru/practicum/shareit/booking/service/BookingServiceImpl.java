@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService {
 
@@ -43,9 +43,9 @@ public class BookingServiceImpl implements BookingService {
         bookingLightDto.setStatus(StatusBooking.WAITING);
         checkedBookingLightDto(bookingLightDto);
         userRepository.findById(bookerId).orElseThrow(UserNotFoundException::new);
-        Booking booking = bookingLightMapper.toBooking(bookingLightDto);
+        Booking booking = bookingLightMapper.toEntity(bookingLightDto);
         booking = bookingRepository.save(booking);
-        return bookingMapper.toBookingDto(booking);
+        return bookingMapper.toDto(booking);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
             throw new IllegalUpdateObjectException("Booking");
         }
         booking.setStatus(approved ? StatusBooking.APPROVED : StatusBooking.REJECTED);
-        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        return bookingMapper.toDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -72,32 +72,27 @@ public class BookingServiceImpl implements BookingService {
         if (booking.get().getItem().getOwner().getId() != userId && booking.get().getBooker().getId() != userId) {
             throw new UserNotFoundException();
         }
-        return bookingMapper.toBookingDto(booking.get());
+        return bookingMapper.toDto(booking.get());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsForUserId(Long userId, BookingRequestStates state) {
-        userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Booking> bookings = bookingRepository.findByBooker_Id(userId);
-        List<BookingDto> bookingsDto = getBookingByState(bookings, state)
-                .stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .map(bookingMapper::toBookingDto)
-                .collect(Collectors.toList());
+    public List<BookingDto> getBookingsForUserId(Long userId, BookingRequestStates state, int from, int size) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        List<Booking> bookings = bookingRepository.findByBooker(user);
+        List<BookingDto> bookingsDto = getBookingByState(bookings, state, from, size);
         return bookingsDto;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsForItemOfUserId(Long userId, BookingRequestStates state) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Booking> bookings = bookingRepository.findByItem_Owner(user);
-        List<BookingDto> bookingsDto = getBookingByState(bookings, state)
-                .stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .map(bookingMapper::toBookingDto)
-                .collect(Collectors.toList());
+    public List<BookingDto> getBookingsForItemOfUserId(Long userId, BookingRequestStates state, int from, int size) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        List<Booking> bookings = bookingRepository.findByItem_Owner(user.get());
+        List<BookingDto> bookingsDto = getBookingByState(bookings, state, from, size);
         return bookingsDto;
     }
 
@@ -112,13 +107,13 @@ public class BookingServiceImpl implements BookingService {
                 bookingLightDto.getEnd().equals(bookingLightDto.getStart())) {
             throw new WrongInputDataBookingException("Booking");
         }
-        if (bookingLightDto.getBookerId() == item.getOwner().getId()) {
+        if (bookingLightDto.getBookerId().equals(item.getOwner().getId())) {
             throw new ItemNotFoundException();
         }
     }
 
 
-    private List<Booking> getBookingByState(List<Booking> bookings, BookingRequestStates state) {
+    private List<BookingDto> getBookingByState(List<Booking> bookings, BookingRequestStates state, int from, int size) {
         Stream<Booking> bookingStream = bookings.stream();
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
@@ -139,7 +134,14 @@ public class BookingServiceImpl implements BookingService {
                 bookingStream = bookingStream.filter(booking -> booking.getStatus() == StatusBooking.REJECTED);
                 break;
         }
-        return bookingStream.sorted(Comparator.comparing(Booking::getStart)).collect(Collectors.toList());
+        List<BookingDto> bookingsDto = bookingStream
+                .sorted(Comparator.comparing(Booking::getStart).reversed())
+                .map(bookingMapper::toDto)
+                .collect(Collectors.toList());
+        if (from + size > bookingsDto.size()) {
+            size = bookingsDto.size() - from;
+        }
+        return bookingsDto.subList(from, from + size);
     }
 
 }

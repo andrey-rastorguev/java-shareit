@@ -22,27 +22,28 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsersDto() {
-        return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDto getUserDtoById(long userId) {
-        return userMapper.toUserDto(userRepository.findById(userId).orElseThrow(UserNotFoundException::new));
+        return userMapper.toDto(userRepository.findById(userId).orElseThrow(UserNotFoundException::new));
     }
 
     @Override
     @Transactional
     public UserDto addUserDto(UserDto userDto) {
-        User user = userMapper.toUser(userDto);
+        User user = userMapper.toEntity(userDto);
         user = userRepository.save(user);
-        return userMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     @Transactional
-    public void removeUserDtoById(long userId) {
+    public long removeUserDtoById(long userId) {
         userRepository.deleteById(userId);
+        return userId;
     }
 
     @Override
@@ -51,6 +52,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.setName(userDto.getName() == null ? user.getName() : userDto.getName());
         user.setEmail(userDto.getEmail() == null ? user.getEmail() : userDto.getEmail());
-        return userMapper.toUserDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 }

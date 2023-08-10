@@ -26,6 +26,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse handlerItemRequestNotFound(final ItemRequestNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     ErrorResponse handlerBookingNotFound(final BookingNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
@@ -44,7 +50,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    ErrorResponse handlerConstraintViolationExceptionHiber(final org.hibernate.exception.ConstraintViolationException e) {
+    ErrorResponse handlerConstraintViolationExceptionHibernate(final org.hibernate.exception.ConstraintViolationException e) {
         return new ErrorResponse(e.getMessage());
     }
 
